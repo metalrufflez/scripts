@@ -1,0 +1,16 @@
+#!/bin/bash
+
+count_work=$(python /usr/local/bin/t/t.py --task-dir ~/.tasks --list work | wc -l | tr -d [:space:])
+count_personal=$(python /usr/local/bin/t/t.py --task-dir ~/.tasks --list personal | wc -l | tr -d [:space:])
+
+if [ "$count_work" -eq 0 -a "$count_personal" -eq 0 ]; then
+    string="$(tput setaf 0)-$(tput sgr0)"
+elif [ "$count_work" -eq 0 ]; then
+    string="$(tput setaf 5)$count_personal$(tput sgr0)" 
+elif [ "$count_personal" -eq 0 ]; then
+    string="$(tput setaf 3)$count_work$(tput sgr0)"
+else
+    string="$(tput setaf 3)$count_work$(tput setaf 7),$(tput setaf 5)$count_personal$(tput sgr0)"
+fi
+
+echo $string

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#/usr/sbin/screencapture -x -t jpg ~/Pictures/AutoPhotos/$(date +%Y%m%d-%H%M)s.jpg
+/usr/local/bin/isightcapture ~/Pictures/AutoPhoto/$(date +%Y%m%d-%H%M)p.jpg
