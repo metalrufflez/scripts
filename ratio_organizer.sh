@@ -32,4 +32,4 @@ while read file; do
 			mv "$file" $WALLPAPERDIR/other_ratio/
 			;;
 	esac
-done < <(ls *jpg *jpeg *png *bmp)
+done < <(ls *jpg *jpeg *png *bmp *JPG *JPEG *PNG *BMP)
