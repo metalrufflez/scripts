@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Set all stderr output to /dev/null
+exec 2> /dev/null
+
+WALLPAPERDIR="$HOME/Dropbox/Photos/Wallpapers"
+
+while read file; do 
+	WIDTH=$(sips -g pixelWidth "$file" | tail -1 | cut -d" " -f4)
+	HEIGHT=$(sips -g pixelHeight "$file" | tail -1 | cut -d" " -f4)
+
+	# Check if the file is a valid image, if not skip
+	[ -z "$WIDTH" ] && continue
+
+	# Test the ratio against my pre configured ones
+	case $(echo "scale=3;$WIDTH / $HEIGHT" | bc) in
+        .563)  folder="iPhone/5" ;;
+        .666)  if [[ "$WIDTH" -ge "640" ]]; then
+                    folder="iPhone/Retina" 
+               else
+                    folder="iPhone/Standard"
+               fi
+               ;;
+        1.000) if [[ "$WIDTH" -gt "1600" ]]; then
+                    folder="iPad/Retina" 
+               else
+                    folder="iPad/Standard"
+               fi
+               ;;
+		1.333) folder="4x3" ;;
+		1.250) folder="5x4" ;;
+		1.777) folder="16x9" ;;
+		1.600) folder="16x10" ;;
+		*) if [[ "$WIDTH" -lt "$HEIGHT" ]]; then
+                if [[ "$WIDTH" -ge "640" ]]; then
+                    folder="iPhone/Retina/odd_ratio" 
+                else
+                    folder="iPhone/Standard/odd_ratio"
+                fi
+           else
+                folder="other_ratio" 
+           fi
+           ;;
+	esac
+
+	echo "Moving $file to $folder"
+    mv "$file" $WALLPAPERDIR/$folder
+done < <(ls *jpg *jpeg *png *bmp *JPG *JPEG *PNG *BMP)
