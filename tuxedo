@@ -6,10 +6,13 @@
 # 
 # Created by: Caio Correa <caio@batatas.org>
 # Named by: @xfer
-# Last Updated: 2013/06/06
+# Last Updated: 2013/06/07
 #
 # PROTIP: Add aliases for the most used sessions in your bash(rc|_profile)
 # alias secrprojects="tuxedo -o staging -i xen,old PROJECTX projx projy projz
+#
+# LAZYTIP: If you want to match any part of the hostname, not just the prefix use this
+# tuxedo -i oracle LAZY *.bkp
 #
 
 function usage() {
@@ -86,9 +89,6 @@ shift
 prefixes=$(echo "($*)" | tr " " "|")
 hosts=$(egrep -i --color=never "host $prefixes" $sshconfig | awk '{ print $2 }' | sort)
 
-# If there are no matching host, exits
-[[ -z "$hosts" ]] && error "There was no match in your hosts for the provided parameters"
-
 # If there is an ignore or only clause, apply it now
 [[ ! -z $ignores ]] && hosts=$(echo "$hosts" | egrep -v "$ignores")
 [[ ! -z $only ]] && hosts=$(echo "$hosts" | egrep "$only")
@@ -98,6 +98,9 @@ if ${dry:-false}; then
     dry_run
     exit 2
 fi
+
+# If there are no matching host, exits
+[[ -z "$hosts" ]] && error "There was no match in your hosts for the provided parameters"
 
 # Change Tab Name (
 echo -e "\033]0;$session\007"
