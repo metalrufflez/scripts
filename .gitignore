@@ -3,3 +3,4 @@ clly
 connventure
 controlplanehelpers/killcyberoam.sh
 controlplanehelpers/killnagstamon.sh
+*.swp
