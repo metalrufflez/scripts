@@ -1,0 +1,117 @@
+#!/bin/bash
+
+#
+# tuxedo
+# Creates a tmux session with hosts grepped from the ~/.ssh/config 
+# 
+# Created by: Caio Correa <caio@batatas.org>
+# Named by: @xfer
+# Last Updated: 2013/06/06
+#
+# PROTIP: Add alias for the most used sessions in your bash(rc|_profile)
+# alias secrprojects="tuxedo -o staging -i xen,old PROJECTX projx projy projz
+
+
+function usage() {
+    echo "${0##*/} -d -h [-i ignore1,ignoreN] [-o only1,onlyN] <SESSION> <prefix1 [prefixN]>"
+}
+
+function print_help(){
+    usage
+    echo
+    echo "REQUIRED PARAMETERS:"
+    echo -e "<SESSION>\t\tSession name"
+    echo -e "<prefix1 [prefixN]>\tPrefixes that will be matched to the .ssh/config"
+    echo
+    echo "OPTIONS:"
+    echo -e "    -d\t\tDry Run. Only prints the main vars"
+    echo -e "    -h\t\tPrint this help"
+    echo -e "    -i\t\tList of ignored statements separated by commas"
+    echo -e "    -o\t\tList of required statements separated by commas"
+    echo
+}
+
+function error() {
+    echo $1
+    exit 1
+}
+
+function dry_run() {
+    echo ignores = $ignores
+    echo only = $only
+    echo session = $session
+    echo prefixes = $prefixes
+    echo hosts = $hosts
+}
+
+sshconfig="$HOME/.ssh/config"
+
+# Check if tmux is installed
+hash tmux 2> /dev/null || error "tmux is not installed"
+
+# Check if there is a sshconfig and it is in place
+[[ ! -a "$sshconfig" ]] && error "The file $sshconfig does not exist"
+
+# Check if there is at least one parameter
+[[ "$#" -eq 0 ]] && usage 
+
+# Gets options
+while getopts ":dhi:o:" option; do
+    case $option in
+        d) dry=true;;
+        h) print_help
+           exit 2
+           ;;
+        i) ignores=$(echo "($OPTARG)" | tr "," "|");;
+        o) only=$(echo "($OPTARG)" | tr "," "|");;
+        *) usage
+           echo "Invalid Option"
+           exit 1
+           ;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+# Check if you have the session name and at least one prefix
+[[ "$#" -lt 2 ]] &&  error "Please provide the Session name and at least one prefix"
+
+# The first parameter should always be the session name
+session=$1
+shift
+
+# Parses the remaining variables to a grepable format
+prefixes=$(echo "($*)" | tr " " "|")
+hosts=$(egrep -i --color=never "host $prefixes" $sshconfig | awk '{ print $2 }' | sort)
+
+# If there are no matching host, exits
+[[ -z "$hosts" ]] && error "There was no match in your hosts for the provided parameters"
+
+# If there is an ignore or only clause, apply it now
+[[ ! -z $ignores ]] && hosts=$(echo "$hosts" | egrep -v "$ignores")
+[[ ! -z $only ]] && hosts=$(echo "$hosts" | egrep "$only")
+
+# if dry run is set, only prints the variables
+if ${dry:-false}; then 
+    dry_run
+    exit 2
+fi
+
+# Change Tab Name
+echo -e "\033]0;$session\007"
+
+# If there isn't already a tmux session with for the session create it
+if ! tmux ls | egrep -q "$session:"; then
+    tmux new-session -d -s $session || exit 1
+
+    # Create a window and ssh for every host in $hosts
+    for host in $hosts; do 
+        tmux new-window -t $session -n "$host" "ssh $host"
+    done
+
+    # Housecleaning
+    tmux kill-window -t $session:0
+    tmux select-window -t $session:1
+fi
+
+# Attach the session
+tmux attach-session -t $session
