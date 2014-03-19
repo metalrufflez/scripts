@@ -43,6 +43,18 @@ while read file; do
            ;;
     esac
 
+    if ! [[ "$folder" =~ "^iP" ]]; then
+        if [[ "$WIDTH" -ge 2560 ]] && [[ "$HEIGHT" -ge 1600 ]]; then
+            folder="$folder/Retina"
+        fi
+    fi
+
+    if echo $folder | egrep -v "(\d+x\d+|other_ratio)"; then
+        folder="Gadgets/$folder"
+    else
+        folder="Desktop/$folder"
+    fi
+
     echo "Moving $file to $folder"
     mv "$file" $WALLPAPERDIR/$folder
 done < <(ls *jpg *jpeg *png *bmp *JPG *JPEG *PNG *BMP)

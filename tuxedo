@@ -112,6 +112,7 @@ if ! tmux ls | egrep -q "$session:"; then
     # For each item, creates a new window and ssh the host
     for host in $hosts; do 
         tmux new-window -t $session -n "$host" "ssh $host"
+        sleep 0.3
     done
 
     # Housecleaning

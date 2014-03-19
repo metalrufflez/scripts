@@ -1,0 +1,27 @@
+function count_ip() {
+    log_file=$1
+    pattern=$2
+    helper_file="/tmp/helperip"
+
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: count_ip <log file> [pattern]"
+        return
+    fi
+ 
+    if [[ ! -a $log_file ]]; then
+        echo "$log_file doesn't exist"
+        return
+    fi
+
+    if [[ -z $pattern ]]; then
+        helper_file=$log_file
+    else
+        egrep "$pattern" $log_file > $helper_file
+    fi
+
+    awk '! /^-/ { print $1 }' $helper_file | tr -d , | sort | uniq -c | sort -bhr | head
+
+    if [[ ! -z $pattern ]]; then
+        rm -f $helper_file
+    fi
+}

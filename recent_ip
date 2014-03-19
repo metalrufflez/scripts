@@ -1,10 +1,10 @@
-function count_ips() {
+function recent_ip() {
     helper_file="/tmp/ips"
     log_file=$1
     pattern=$2
 
     if [[ $# -eq 0 ]]; then
-        echo "Usage: count_ips <log file> [pattern]"
+        echo "Usage: recent_ip <log file> [pattern]"
         return
     fi
 
@@ -14,15 +14,13 @@ function count_ips() {
     fi
 
     echo "Counting IPs"
-    tail -f $log_file | grep "${pattern:-.}" > $helper_file &
+    tail -f $log_file | egrep "${pattern:-.}" > $helper_file &
     sleep 60
     kill %1
 
     echo "-------------------------------------"
 
-    while read ip; do 
-        echo -e "$(grep $ip $helper_file | wc -l)\t$ip"
-    done < <(awk '{ print $1 }' $helper_file | sort -u) | sort -hr | head
+    awk '! /^-/ { print $1 }' $helper_file | tr -d , | sort | uniq -c | sort -bhr | head
 
     rm $helper_file
 }
