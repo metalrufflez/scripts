@@ -1,0 +1,42 @@
+#!/bin/bash
+
+count_work=$(grep -v "+caio" ~/Applications/todo.txt/todo.txt | wc -l | tr -d [:space:])
+count_personal=$(grep "+caio" ~/Applications/todo.txt/todo.txt | wc -l | tr -d [:space:])
+
+function make_blink() {
+    echo $(tput blink)$1$(tput sgr0)
+}
+
+function make_workstr() {
+    echo $(tput setaf 3)$count_work$(tput sgr0)
+}
+
+function make_personalstr() {
+    echo $(tput setaf 5)$count_personal$(tput sgr0)
+}
+
+if [[ $count_work -gt 0 ]]; then
+    workstr=$(make_workstr)
+fi
+
+if [[ $count_personal -gt 0 ]]; then
+    personalstr=$(make_personalstr)
+fi
+
+if [ "$count_work" -gt 7 ]; then
+    workstr=$(make_blink $workstr)
+fi
+
+if [ "$count_personal" -gt 7 ]; then
+    personalstr=$(make_blink $personalstr)
+fi
+
+if [[ $workstr ]] && [[ $personalstr ]]; then
+    string=$workstr,$personalstr
+elif [[ $workstr ]]; then
+    string=$workstr
+else
+    string=$personalstr
+fi
+
+echo -n $string
