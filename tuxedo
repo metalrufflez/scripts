@@ -6,7 +6,7 @@
 # 
 # Created by: Caio Correa <caio@batatas.org>
 # Named by: @xfer
-# Last Updated: 2013/06/07
+# Last Updated: 2014/03/20
 #
 # PROTIP: Add aliases for the most used sessions in your bash(rc|_profile)
 # alias secrprojects="tuxedo -o staging -i xen,old PROJECTX projx projy projz
