@@ -92,7 +92,7 @@ prefixes=$(echo "($*)" | tr " " "|")
 hosts=$(egrep -i --color=never "host $prefixes" $sshconfig | awk '{ print $2 }')
 
 # Sort hosts if selected
-if [[ $sorted ]]; then
+if ${sorted:-false}; then 
     hosts=$(echo "$hosts" | sort)
 fi
 
