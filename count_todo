@@ -1,7 +1,7 @@
 #!/bin/bash
 
-count_work=$(grep -v "+caio" ~/Applications/todo.txt/todo.txt | wc -l | tr -d [:space:])
-count_personal=$(grep "+caio" ~/Applications/todo.txt/todo.txt | wc -l | tr -d [:space:])
+count_work=$(grep -v "+caio" ~/Dropbox/Apps/todo.txt/todo.txt | wc -l | tr -d [:space:])
+count_personal=$(grep "+caio" ~/Dropbox/Apps/todo.txt/todo.txt | wc -l | tr -d [:space:])
 
 function make_blink() {
     echo $(tput blink)$1$(tput sgr0)
