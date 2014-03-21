@@ -1,5 +1,6 @@
 #!/bin/bash
 
+blink_threshold=10
 count_work=$(grep -v "+caio" ~/Dropbox/Apps/todo.txt/todo.txt | wc -l | tr -d [:space:])
 count_personal=$(grep "+caio" ~/Dropbox/Apps/todo.txt/todo.txt | wc -l | tr -d [:space:])
 
@@ -23,11 +24,11 @@ if [[ $count_personal -gt 0 ]]; then
     personalstr=$(make_personalstr)
 fi
 
-if [ "$count_work" -gt 7 ]; then
+if [ "$count_work" -gt $blink_threshold ]; then
     workstr=$(make_blink $workstr)
 fi
 
-if [ "$count_personal" -gt 7 ]; then
+if [ "$count_personal" -gt $blink_threshold ]; then
     personalstr=$(make_blink $personalstr)
 fi
 
