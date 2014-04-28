@@ -110,7 +110,7 @@ fi
 [[ -z "$hosts" ]] && error "There was no match in your hosts for the provided parameters"
 
 # Change Tab Name (
-echo -e "\033]0;$session\007"
+echo -e "\033]0;TMUX\007"
 
 # If there isn't already a tmux session with the $session name, creates one
 if ! tmux ls | egrep -q "$session:"; then

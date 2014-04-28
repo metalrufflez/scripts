@@ -49,7 +49,7 @@ while read file; do
         fi
     fi
 
-    if echo $folder | egrep -v "(\d+x\d+|other_ratio)"; then
+    if echo $folder | egrep -q -v "(\d+x\d+|other_ratio)"; then
         folder="Gadgets/$folder"
     else
         folder="Desktop/$folder"
