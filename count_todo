@@ -9,7 +9,7 @@ function make_blink() {
 }
 
 function make_workstr() {
-    echo $(tput setaf 3)$count_work$(tput sgr0)
+    echo $(tput setaf 4)$count_work$(tput sgr0)
 }
 
 function make_personalstr() {

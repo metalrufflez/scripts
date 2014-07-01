@@ -6,7 +6,7 @@
 # 
 # Created by: Caio Correa <caio@batatas.org>
 # Named by: @xfer
-# Last Updated: 2014/03/20
+# Last Updated: 2014/07/01
 #
 # PROTIP: Add aliases for the most used sessions in your bash(rc|_profile)
 # alias secrprojects="tuxedo -o staging -i xen,old PROJECTX projx projy projz
@@ -91,6 +91,12 @@ shift
 prefixes=$(echo "($*)" | tr " " "|")
 hosts=$(egrep -i --color=never "host $prefixes" $sshconfig | awk '{ print $2 }')
 
+# Just for beautifying purposes, if only one prefix set prefix_clean, will
+# be used when creating the tmux tabs
+if [[ $# == "1" ]]; then
+	prefix_clean="$1"
+fi
+
 # Sort hosts if selected
 if ${sorted:-false}; then 
     hosts=$(echo "$hosts" | sort)
@@ -118,7 +124,7 @@ if ! tmux ls | egrep -q "$session:"; then
 
     # For each item, creates a new window and ssh the host
     for host in $hosts; do 
-        tmux new-window -t $session -n "$host" "ssh $host"
+        tmux new-window -t $session -n "${host#$prefix_clean}" "ssh $host"
         sleep 0.3
     done
 
