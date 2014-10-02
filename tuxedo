@@ -6,7 +6,6 @@
 # 
 # Created by: Caio Correa <caio@batatas.org>
 # Named by: @xfer
-# Last Updated: 2014/07/01
 #
 # PROTIP: Add aliases for the most used sessions in your bash(rc|_profile)
 # alias secrprojects="tuxedo -o staging -i xen,old PROJECTX projx projy projz
@@ -119,7 +118,7 @@ fi
 echo -e "\033]0;TMUX\007"
 
 # If there isn't already a tmux session with the $session name, creates one
-if ! tmux ls | egrep -q "$session:"; then
+if ! tmux ls 2> /dev/null | egrep -q "$session:"; then
     tmux new-session -d -s $session || exit 1
 
     # For each item, creates a new window and ssh the host
