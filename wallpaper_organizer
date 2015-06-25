@@ -27,10 +27,6 @@ while read file; do
                     folder="iPad/Standard"
                fi
                ;;
-        1.333) folder="4x3" ;;
-        1.250) folder="5x4" ;;
-        1.777) folder="16x9" ;;
-        1.600) folder="16x10" ;;
         *) if [[ "$WIDTH" -lt "$HEIGHT" ]]; then
                 if [[ "$WIDTH" -ge "640" ]]; then
                     folder="iPhone/Retina/odd_ratio" 
@@ -38,23 +34,15 @@ while read file; do
                     folder="iPhone/Standard/odd_ratio"
                 fi
            else
-                folder="other_ratio" 
+                folder="Desktop" 
            fi
            ;;
     esac
 
-    if ! [[ "$folder" =~ "^iP" ]]; then
-        if [[ "$WIDTH" -ge 2560 ]] && [[ "$HEIGHT" -ge 1600 ]]; then
-            folder="$folder/Retina"
-        fi
-    fi
-
-    if echo $folder | egrep -q -v "(\d+x\d+|other_ratio)"; then
+    if [[ $folder != "Desktop" ]]; then
         folder="Gadgets/$folder"
-    else
-        folder="Desktop/$folder"
     fi
 
     echo "Moving $file to $folder"
-    mv "$file" $WALLPAPERDIR/$folder
+    mv "$file" "$WALLPAPERDIR/$folder/${WIDTH}x${HEIGHT}_$file"
 done < <(ls *jpg *jpeg *png *bmp *JPG *JPEG *PNG *BMP)
